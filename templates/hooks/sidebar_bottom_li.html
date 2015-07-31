@@ -1,0 +1,35 @@
+<li>
+    <a href="javascript:void(0)" id="s-plugin-deliverylist-link"><i class="icon16 print"></i> Маршрутный лист</a>
+</li>
+<script type="text/javascript">
+    $(function () {
+        $('#s-plugin-deliverylist-link').click(function () {
+            var params = $.shop.helper.parseParams(params || '');
+            if (!params.view) {
+                params.view = $.storage.get('shop/orders/view') || 'split';
+            }
+            if (params.view == 'table') {
+                var $selected_rows = $('tr.order.selected', '#order-list');
+                if ($selected_rows.length) {
+                    var ids = [];
+                    $selected_rows.each(function () {
+                        ids.push($(this).data('order-id'))
+                    });
+                    $.post(
+                            '?plugin=deliverylist&module=printform&action=display',
+                            {
+                                ids: ids
+                            },
+                            function (data) {
+                                var width = window.innerWidth * 0.85;
+                                var win = window.open('', 'printversion', 'scrollbars=1,width='+width+',height=600');
+                                win.document.open();
+                                win.document.write(data);
+                                win.document.close();
+                            });
+
+                } else alert('Отметтье хотя бы один заказ')
+            } else alert('Плагин работает только в табличном режиме просмотра списка заказов')
+        });
+    })
+</script>

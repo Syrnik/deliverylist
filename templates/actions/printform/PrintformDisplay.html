@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Печатная форма маршрутного листа</title>
+    <style>
+        body {
+            font-family: "Liberation Sans", "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%
+        }
+
+        table, tr, th, td {
+            border: 1px solid #555;
+            border-collapse: collapse;
+        }
+
+        th, th td {
+            background-color: #e9e9e9;
+        }
+
+        th, td {
+            padding: 0.2em 0.3em
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right
+        }
+
+        @media screen {
+            #content {
+                /*width: 95%;*/
+                width: 29cm;
+                border: 1px solid #ccc;
+                padding: 1cm;
+                margin: 0 auto;
+            }
+        }
+
+        @media print {
+            body {
+                font-size: 2.5mm
+            }
+
+            h1 {
+                font-size: 3.5mm;
+            }
+
+            @page {
+                margin: 1cm;
+                size: landscape;
+            }
+        }
+    </style>
+</head>
+<body>
+{$total=0}
+{function count_items items=[]}
+    {assign var=cnt value=0}
+    {foreach $items as $i}
+        {$cnt = $cnt + $i.quantity}
+    {/foreach}
+    {$cnt}
+{/function}
+{function count_weight items=[]}
+    {assign var=weight value=0.0}
+    {foreach $items as $i}
+        {$weight = $weight + floatval(str_replace(',','.', $i.weight)) * $i.quantity}
+    {/foreach}
+    {$weight}
+{/function}
+<div id="content">
+    <h1>Маршрутный лист №</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Дата доставки</th>
+            <th>Номер заказа</th>
+            <th>Сумма заказа</th>
+            <th>Количество товара (мест)</th>
+            <th>Вес заказа (кг)</th>
+            <th>ФИО покупателя</th>
+            <th>Адрес доставки</th>
+            <th>Телефон</th>
+            <th style="min-width: 7em">&nbsp;</th>
+            <th>Примечание</th>
+            <th>Время с</th>
+            <th>Время до</th>
+        </tr>
+        </thead>
+        {foreach $orders as $order}
+            <tr>
+                <td>{$order@index+1}</td>
+                <td></td>
+                <td>{$order.id_str}</td>
+                <td class="text-right nowrap">{wa_currency($order.total, $order.currency)}</td>
+                <td class="text-center">{count_items items=$order.items}</td>
+                <td class="text-right">{count_weight items=$order.items}</td>
+                <td>{$order.contact.name}</td>
+                <td>{$order.params['shipping_address.street']}</td>
+                <td>
+                    {$wa->contact($order.contact_id)->get('phone', 'html')}
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        {/foreach}
+    </table>
+</div>
+</body>
+</html>
