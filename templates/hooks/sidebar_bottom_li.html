@@ -1,6 +1,14 @@
 <li>
     <a href="javascript:void(0)" id="s-plugin-deliverylist-link"><i class="icon16 print"></i> Маршрутный лист</a>
 </li>
+<li>
+    <a href="javascript:void(0)" id="s-plugin-deliverylist-excel"><i class="icon16 xlsx"></i> Маршрутный лист (Excel)</a>
+</li>
+<style>
+    i.icon16.xlsx {
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjlJREFUeNqUU01oE0EU/naNNGKrpYo3DVFpz9aLiEVTRVRQSQ82oCBKD0pEa5HakoIHDa055dKbCEUPbRGrVL3UH1AUwXrwYqkp/VNQJCSiW+3u7Oy476272aAXPxje28l83/fem4m2Pl0HHzfb3yg/F8IK9qUt4Ugn+D73cI/m5xE/2de8X2VfH4d0hEuwPaLjwBIm55OZGRjLwIOJF9g8165m4yNaIHAp2aN2btmFWEMca2rqUF9TjzAaMzGOtVHANE1cy3SiLwsW0cmZyB23unAk34YFYxEj7+5gQ2ojUldPVwlRBY5bVV82z99USWShNM/OExfGcGLoMAbGzuLJ40U+sLethaNlWbjxaNpTqY0h3dnL6WC+H7qQgssuizJ6kgNYt0rHyWQcuev9wOqKe8ehJl6ERPMmjkop6DQw6rlslfB+roDR8XmsjepYUksw1M+qCoIqXNiOdxG6v/Hl+2fkBnPs/KFoYOrlbRYhOEoi1drEi6/YJgGPqtNVEc5f6ebYfbkX21pPofDjG+4NjQaOw0+neXnuKhCISMe786/DH6smfvFMGpVHJZBKNMKSit0NM3hvroCUwT1Tr36kssPwyeOvCkhs3+qK/KmgWCoGzzLbcl8dPbC7wnKnTETC3ecekVuwHQi/hbCLbQtY7o90OIyDOzzis7czlbZs7W8Bwi9LBYRlAURXepHcydlrxxWQ/xCgZ0qHJ6c+8ZT9Sfv9UtnkTGSpVvCeFv47x2ePKfwnfgswAJHeHwMEdbzeAAAAAElFTkSuQmCC);
+    }
+</style>
 <script type="text/javascript">
     $(function () {
         $('#s-plugin-deliverylist-link').click(function () {
@@ -28,7 +36,46 @@
                                 win.document.close();
                             });
 
-                } else alert('Отметтье хотя бы один заказ')
+                } else alert('Отметьте хотя бы один заказ')
+            } else alert('Плагин работает только в табличном режиме просмотра списка заказов')
+        });
+        $('#s-plugin-deliverylist-excel').click(function () {
+            var params = $.shop.helper.parseParams(params || '');
+            if (!params.view) {
+                params.view = $.storage.get('shop/orders/view') || 'split';
+            }
+            if (params.view == 'table') {
+                var $selected_rows = $('tr.order.selected', '#order-list');
+                if ($selected_rows.length) {
+                    var ids = [];
+                    $selected_rows.each(function () {
+                        ids.push($(this).data('order-id'))
+                    });
+
+                    var get_params = $.param({
+                        plugin:'deliverylist',
+                        module: 'printform',
+                        action: 'excel',
+                        ids: ids
+                    });
+
+                    console.log(get_params);
+                    window.open('?'+get_params, '_blank');
+
+//                    $.get(
+//                            '?plugin=deliverylist&module=printform&action=excel',
+//                            {
+//                                ids: ids
+//                            },
+//                            function (data) {
+//                                var width = window.innerWidth * 0.85;
+//                                var win = window.open('', 'printversion', 'scrollbars=1,width='+width+',height=600');
+//                                win.document.open();
+//                                win.document.write(data);
+//                                win.document.close();
+//                            });
+
+                } else alert('Отметьте хотя бы один заказ')
             } else alert('Плагин работает только в табличном режиме просмотра списка заказов')
         });
     })

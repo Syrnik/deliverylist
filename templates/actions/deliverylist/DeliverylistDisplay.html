@@ -91,7 +91,6 @@
         <thead>
         <tr>
             <th>№ п/п</th>
-            <th>Дата доставки</th>
             <th>Номер заказа</th>
             <th>Сумма заказа</th>
             <th>Количество товара (мест)</th>
@@ -101,14 +100,12 @@
             <th>Телефон</th>
             <th style="min-width: 7em">&nbsp;</th>
             <th>Примечание</th>
-            <th>Время с</th>
-            <th>Время до</th>
+            <th>Время доставки</th>
         </tr>
         </thead>
         {foreach $orders as $order}
             <tr>
                 <td>{$order@index+1}</td>
-                <td></td>
                 <td>{$order.id_str}</td>
                 <td class="text-right nowrap">{wa_currency($order.total, $order.currency)}</td>
                 <td class="text-center">{count_items items=$order.items}</td>
@@ -118,9 +115,7 @@
                 <td>
                     {$wa->contact($order.contact_id)->get('phone', 'html')}
                 </td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{$order.comment}</td>
                 <td></td>
             </tr>
         {/foreach}
